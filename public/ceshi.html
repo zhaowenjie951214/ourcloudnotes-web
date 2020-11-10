@@ -1,0 +1,11 @@
+
+<body onunload="goodbye()">
+
+<script>
+window.onbeforeunload = function(e){     
+　　var e = window.event||e;  
+　　e.returnValue=("确定离开当前页面吗？");
+} 
+</script>
+
+</body>
