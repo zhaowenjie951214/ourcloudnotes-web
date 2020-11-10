@@ -14,11 +14,8 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
-import apiBase from '@/api/global/apiBase.js'
-
 Vue.config.productionTip = false
 new Vue({
-  apiBase,
   router,
   store,
   render: h => h(App),

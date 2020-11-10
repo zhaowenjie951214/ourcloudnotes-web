@@ -1,24 +1,16 @@
 # ourcloudnotes
 
-## Project setup
+## 安装依赖包
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+cnpm install
 ```
 
-### Compiles and minifies for production
+### 运行项目
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+cnpm run serve
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 打包项目
+```
+cnpm run build.prod
+```

@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { Message, MessageBox } from 'element-ui'
 // import store from '../store'
-import apiBase from '../api/global/apiBase'
 // import {getToken,removeToken} from '../utils/auth'
 import Qs from 'qs'
 var moment = require("moment");
@@ -117,7 +116,7 @@ export default {
     })
   },
   post: (url, data) => {
-    console.log("apiBase.HOST:" + apiBase.HOST)
+    console.log("VUE_APP_BASE_API:" + process.env.VUE_APP_BASE_API)
     var fetch = getService()
     return fetch({
       url: url,
@@ -126,6 +125,7 @@ export default {
     })
   },
   get: (url, params) => {
+    console.log("VUE_APP_BASE_API:" + process.env.VUE_APP_BASE_API)
     var fetch = getService()
     return fetch({
       url: url,
