@@ -1,15 +1,17 @@
 <template>
-  <div class="right" id="right">
-    <input ref="titleInput" style="width: calc(100% - 20px);border: none;height: 40px;padding-left: 20px; outline: none;" v-if="tinymceStatus" v-model="noteContent.title" @keydown="showContent" @keyup.enter="saveContent"/>
-    <!-- {{content}} -->
+  <div class="right" id="right" style="background-color: #F7F7F7;">
+    <input ref="titleInput" style="width: calc(100% - 20px - 46px);border: none;height: 40px;padding-left: 20px; outline: none;" v-if="tinymceStatus" v-model="noteContent.title" :disabled="!editStatus" @keydown="showContent" @keyup.enter="saveContent"/>
+    <el-button style="margin-left: 10px;" type="primary" icon="el-icon-edit" circle size="small" @click="editStatus = true" v-if="tinymceStatus && !editStatus"></el-button>
+    <el-button style="margin-left: 10px;" type="success" icon="el-icon-check" circle size="small" @click="saveContent()" :loading="editStatusLoading" v-if="tinymceStatus && editStatus"></el-button>
     <tinymce-editor
       ref="tinymceEditor"
-      v-if="tinymceStatus" 
+      v-if="tinymceStatus && editStatus" 
       :init="init"
       v-model="noteContent.content"
       @onKeyDown="showContent"
       @onClick="closeMenu"
     ></tinymce-editor>
+     <iframe  @dbclick="editStatus = true" class="tox-tinymce" ref="tox-tinymce" v-if="tinymceStatus && !editStatus"  :src="VUE_APP_BASE_API +'notes/content/show/'+noteContentId" frameborder="0" ></iframe>
   </div>
 </template>
 
@@ -24,6 +26,10 @@ export default {
   },
   data() {
     return {
+      editStatusLoading:false,
+      editStatus:false,
+      noteContentId:0,
+      VUE_APP_BASE_API: process.env.VUE_APP_BASE_API,
       noteContent:{
         content: "",
       },
@@ -52,6 +58,9 @@ export default {
     this.getNoteContent();
   },
   methods: {
+    show(){
+      alert("2342342")
+    },
     getContentText(msg) {
           msg = msg.replace(/<\/?[^>]*>/g, ''); //去除HTML Tag
           msg = msg.replace(/[|]*\n/, '') //去除行尾空格
@@ -59,8 +68,10 @@ export default {
           return msg;
       },
     getNoteContent() {
+      this.editStatus = false;
       const Id = this.$route.params.Id;
       if (Id != null) {
+        this.noteContentId = Id;
         rightApi.getNoteContent(Id).then((res) => {
           console.log(res);
           this.noteContent = res.data;
@@ -86,39 +97,46 @@ export default {
       }
     },
     saveContent(){
-      var content = this.noteContent.content;
+      this.editStatusLoading = true
+      var content = this.noteContent.content
       this.noteContent.synopsis = this.getContentText(content).substr(0,100)
-      console.log(this.noteContent);
+      console.log(this.noteContent)
       rightApi.updateNoteContent(this.noteContent)
-        .then((res) => {
-          console.log(res);
-          eventBus.$emit("getNoteContentMenuId");
+        .then(res => {
+          eventBus.$emit("getNoteContentMenuId")
           this.$notify({
             title: '保存成功',
             message: '笔记内容保存成功，自动签入',
             type: 'success'
-          });
+          })
+          this.editStatus = false
+          setTimeout(() =>{
+            this.$refs["tox-tinymce"].contentWindow.location.reload(true)
+            this.editStatusLoading = false
+          },1);
+          
         })
-        this.$refs["titleInput"].blur();
+        this.$refs["titleInput"].blur() 
     },
     file_picker_callback(callback, value, meta) {
       //文件分类
       var filetype =
         ".pdf, .txt, .zip, .rar, .7z, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .mp3, .mp4";
       //后端接收上传文件的地址
-      var upurl = "http://47.99.105.168:5050/uploadFile";
+      var upurl = "";
       //为不同插件指定文件类型及后端地址
       switch (meta.filetype) {
         case "image":
           filetype = ".jpg, .jpeg, .png, .gif";
-          upurl = "http://47.99.105.168:5050/uploadImage";
+          upurl = process.env.VUE_APP_BASE_API + "uploadImage";
           break;
         case "media":
           filetype = ".mp3, .mp4";
-          upurl = "http://47.99.105.168:5050/uploadFile";
+          upurl = process.env.VUE_APP_BASE_API + "uploadFile";
           break;
         case "file":
-        default:
+          upurl = process.env.VUE_APP_BASE_API + "uploadFile";
+          break;
       }
       //模拟出一个input用于添加本地文件
       var input = document.createElement("input");
@@ -132,6 +150,8 @@ export default {
         xhr = new XMLHttpRequest();
         xhr.withCredentials = false;
         xhr.open("POST", upurl);
+        xhr.setRequestHeader('token','token_admin');
+
         xhr.onload = function () {
           var json;
           if (xhr.status != 200) {
@@ -145,7 +165,7 @@ export default {
           // }
           switch (meta.filetype) {
             case "image":
-              callback("http://47.99.105.168:8888/"+json.data.bigurl);
+              callback(process.env.VUE_APP_IMGE_URL + json.data.bigurl);
               break;
             case "media":
               callback(json.data);
@@ -170,5 +190,9 @@ export default {
   border: 0px!important; 
   border-radius: 0px;
   border-top: 1px solid #e0e1e5!important;
+  height:calc(100vh - 90px);
+  width: 720px;
+  /* background-color: red; */
+  float: left;
 }
 </style>

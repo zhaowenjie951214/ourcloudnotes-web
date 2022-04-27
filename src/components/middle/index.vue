@@ -44,7 +44,7 @@
         <div>{{ item.title }}</div>
         <el-popconfirm
           title="确定要删除吗？"
-          @onConfirm="deleteNoteContent(item)"
+          @confirm="deleteNoteContent(item)"
         >
           <img
             slot="reference"
@@ -54,7 +54,7 @@
         </el-popconfirm>
         <a
           target="_blank"
-          :href="'http://47.99.105.168:8780/notes/content/export/' + item.id"
+          :href="'http://10.60.120.52:1010/notes/content/export/' + item.id"
           ><img
             class="delete"
             width="18px"

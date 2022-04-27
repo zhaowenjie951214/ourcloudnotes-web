@@ -1,6 +1,6 @@
 <template>
   <div id="index" class="index">
-     <TopBanner/>
+     <top-banner/>
      <left/>
      <middle/>
      <right/>
@@ -14,10 +14,10 @@
 import left from '../components/left'
 import middle from '../components/middle'
 import right from '../components/right'
-import TopBanner from '../components/head'
+import topBanner from '@/components/head'
 export default {
    components:{
-       left,middle,right,TopBanner
+       left,middle,right,topBanner
    },
    mounted(){
     //  setTimeout(() => {

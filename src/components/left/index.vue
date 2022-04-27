@@ -1,55 +1,56 @@
 <template>
-  <div class="left"  @contextmenu.prevent="openMenu($event,null,null)">
+  <div class="left" @contextmenu.prevent="openMenu($event,null,null)">
     <el-tree
-      :data="data"
-      node-key="id"
-      :highlight-current="true"
-      :expand-on-click-node="false"
-      @current-change="currentChange"
-      @node-contextmenu="openMenu"
-      @node-drag-start="handleDragStart"
-      @node-drag-enter="handleDragEnter"
-      @node-drag-leave="handleDragLeave"
-      @node-drag-over="handleDragOver"
-      @node-drag-end="handleDragEnd"
-      @node-drop="handleDrop"
-      draggable
-      :allow-drop="allowDrop"
-      :allow-drag="allowDrag"
-      ref="tree"
+        :data="data"
+        node-key="id"
+        :highlight-current="true"
+        :expand-on-click-node="false"
+        @current-change="currentChange"
+        @node-contextmenu="openMenu"
+        @node-drag-start="handleDragStart"
+        @node-drag-enter="handleDragEnter"
+        @node-drag-leave="handleDragLeave"
+        @node-drag-over="handleDragOver"
+        @node-drag-end="handleDragEnd"
+        @node-drop="handleDrop"
+        draggable
+        :allow-drop="allowDrop"
+        :allow-drag="allowDrag"
+        ref="tree"
     >
       <div class="custom-tree-node" slot-scope="{ node }">
         <div>
           <!-- <i class="el-icon-folder" v-show="!node.expanded"></i><i class="el-icon-folder-opened" v-show="node.expanded"></i> -->
           <div style="float: left;">
-          <img
-            src="../../assets/left/wenjianjia.png"
-            width="20px"
-            height="20px"
-            v-show="!node.expanded"
-          /><img
-            src="../../assets/left/huabanfuben.png"
-            v-show="node.expanded"
-            width="20px"
-            height="20px"
+            <img
+                src="../../assets/left/wenjianjia.png"
+                width="20px"
+                height="20px"
+                v-show="!node.expanded"
+            /><img
+              src="../../assets/left/huabanfuben.png"
+              v-show="node.expanded"
+              width="20px"
+              height="20px"
           />
           </div>
           <div style="float: right; width:calc(100% - 30px);" v-if="node.label.split('|').length === 1">
             {{ node.label.split("|")[0] }}
           </div>
-          <div style="background-color: #398dee;float: right;width:calc(100% - 30px);" v-if="node.label.split('|').length > 1">
+          <div style="background-color: #398dee;float: right;width:calc(100% - 30px);"
+               v-if="node.label.split('|').length > 1">
             <input
-              ref="renameInput"
-              v-model="renameLabel"
-              class="nodeInput"
-              @keyup.enter="renameSubmit(node)"
-              @blur="renameSubmit(node)"
+                ref="renameInput"
+                v-model="renameLabel"
+                class="nodeInput"
+                @keyup.enter="renameSubmit(node)"
+                @blur="renameSubmit(node)"
             />
           </div>
         </div>
       </div>
     </el-tree>
-    <contextmenu :menuNode="menuNodes" @onClick="menuClick" />
+    <contextmenu :menuNode="menuNodes" @onClick="menuClick"/>
   </div>
 </template>
 
@@ -57,10 +58,10 @@
 import contextmenu from "../contextmenu";
 import * as indexApi from "@/api/left";
 import * as middleApi from "@/api/middle";
-import eventBus from "../../utils/eventBus";
+import eventBus from "@/utils/eventBus";
 
 export default {
-  components: { contextmenu },
+  components: {contextmenu},
   data() {
     return {
       data: [],
@@ -68,15 +69,15 @@ export default {
       node: {},
       renameLabel: "",
       menuNodes: [
-        { key: "addNotes", label: "新建笔记" },
-        { key: "addFile", label: "新建文件夹" },
-        { key: "rename", label: "重命名" },
-        { key: "delete", label: "删除" },
+        {key: "addNotes", label: "新建笔记"},
+        {key: "addFile", label: "新建文件夹"},
+        {key: "rename", label: "重命名"},
+        {key: "delete", label: "删除"},
       ],
     };
   },
   watch: {
-    "$route.params.menuId"(){
+    "$route.params.menuId"() {
       this.setCurrentKey(false)
     },
   },
@@ -86,7 +87,7 @@ export default {
       this.back();
     });
     eventBus.$on("addNotes", menuNodeId => {
-      console.log("menuNodeId",menuNodeId)
+      console.log("menuNodeId", menuNodeId)
       this.addNotes(menuNodeId);
     });
   },
@@ -95,7 +96,7 @@ export default {
       this.$store.commit("visible", false);
       console.log("val1", var1);
       console.log("val2", var2);
-      this.$router.push({ name: "indexmenu", params: { menuId: var1.id } });
+      this.$router.push({name: "indexmenu", params: {menuId: var1.id}});
     },
     handleDragStart(node, ev) {
       console.log("ev", ev);
@@ -139,9 +140,9 @@ export default {
       console.log(item);
       this.menuNode = item;
       this.node = node;
-      if(item != null){
+      if (item != null) {
         this.renameLabel = item.label.split("|")[0];
-        this.$router.push({ name: "indexmenu", params: { menuId: this.menuNode.id } });
+        this.$router.push({name: "indexmenu", params: {menuId: this.menuNode.id}});
       }
       if (event.clientX > 1800) {
         this.$store.commit("left", event.clientX - 100);
@@ -156,22 +157,22 @@ export default {
       }
       this.$store.commit("visible", true);
     },
-    addNotes(menuNodeId){
+    addNotes(menuNodeId) {
       middleApi
-        .createNoteContent({
-          menuId: menuNodeId,
-          content: "",
-          title: "无标题笔记",
-          synopsis: "",
-        })
-        .then((res) => {
-          console.log(res);
-          this.$router.push({
-            name: "indexContent",
-            params: { menuId: this.menuNode.id, Id: res.data },
+          .createNoteContent({
+            menuId: menuNodeId,
+            content: "",
+            title: "无标题笔记",
+            synopsis: "",
+          })
+          .then((res) => {
+            console.log(res);
+            this.$router.push({
+              name: "indexContent",
+              params: {menuId: this.menuNode.id, Id: res.data},
+            });
+            eventBus.$emit("getNoteContentMenuId");
           });
-          eventBus.$emit("getNoteContentMenuId");
-        });
     },
     menuClick(item) {
       if (item.key === "addNotes") {
@@ -179,28 +180,28 @@ export default {
       } else if (item.key === "addFile") {
         console.log(item.key);
         // this
-        const newChild = { id: 0, label: "新建文件夹|", children: [] };
+        const newChild = {id: 0, label: "新建文件夹|", children: []};
         if (!this.menuNode.children) {
           this.$set(this.menuNode, "children", []);
         }
         indexApi
-          .createNotesMenu({ parentId: this.menuNode.id, label: "新建文件夹" })
-          .then((res) => {
-            console.log(res);
-            newChild.id = res.data.id;
-            this.menuNode.children.push(newChild);
+            .createNotesMenu({parentId: this.menuNode.id, label: "新建文件夹"})
+            .then((res) => {
+              console.log(res);
+              newChild.id = res.data.id;
+              this.menuNode.children.push(newChild);
 
-            console.log(this.$refs.tree.store.nodesMap);
-            this.$refs.tree.store.nodesMap[this.menuNode.id].expanded = true;
+              console.log(this.$refs.tree.store.nodesMap);
+              this.$refs.tree.store.nodesMap[this.menuNode.id].expanded = true;
 
-            this.menuNode = newChild;
-            this.renameLabel = this.menuNode.label.split("|")[0];
-            this.timer = setTimeout(() => {
-              //设置延迟执行
-              console.log(this.$refs.renameInput);
-              this.$refs.renameInput.focus();
-            }, 100);
-          });
+              this.menuNode = newChild;
+              this.renameLabel = this.menuNode.label.split("|")[0];
+              this.timer = setTimeout(() => {
+                //设置延迟执行
+                console.log(this.$refs.renameInput);
+                this.$refs.renameInput.focus();
+              }, 100);
+            });
       } else if (item.key === "rename") {
         this.menuNode.label += "|rename";
         this.timer = setTimeout(() => {
@@ -209,12 +210,12 @@ export default {
           this.$refs.renameInput.focus();
         }, 100);
       } else {
-         this.$confirm('此操作将永久删除该文件夹, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该文件夹, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          indexApi.deleteNotesMenu({ id: this.menuNode.id }).then((res) => {
+          indexApi.deleteNotesMenu({id: this.menuNode.id}).then((res) => {
             console.log(res);
             const parent = this.node.parent;
             console.log("parent", parent);
@@ -222,66 +223,65 @@ export default {
             const index = children.findIndex((d) => d.id === this.menuNode.id);
             children.splice(index, 1);
           });
-        }).catch(() => {       
+        }).catch(() => {
         });
       }
     },
     renameSubmit(node) {
       console.log(node)
-      if (this.renameLabel != null && this.renameLabel != "") {
-        indexApi.updateNotesMenu({ id: this.menuNode.id, label: this.renameLabel }).then(
-          (res) => {
-            console.log(res);
-            this.menuNode.label = this.renameLabel;
-            this.renameLabel = "";
-          },
-          (err) => {
-            console.log("err", err);
-            this.menuNode.label = this.menuNode.label.split("|")[0];
-            this.renameLabel = "";
-          }
+      if (this.renameLabel !== null && this.renameLabel !== "") {
+        indexApi.updateNotesMenu({id: this.menuNode.id, label: this.renameLabel}).then(
+            (res) => {
+              console.log(res);
+              this.menuNode.label = this.renameLabel;
+              this.renameLabel = "";
+            },
+            (err) => {
+              console.log("err", err);
+              this.menuNode.label = this.menuNode.label.split("|")[0];
+              this.renameLabel = "";
+            }
         );
       } else {
         this.menuNode.label = this.menuNode.label.split("|")[0];
         this.renameLabel = "";
       }
     },
-    setCurrentKey(type){ 
+    setCurrentKey(type) {
       const meunId = this.$route.params.menuId;
-      console.log("meunId",meunId)
-      indexApi.tree({id:meunId}).then((res) => {
-        if(type)
+      console.log("meunId", meunId)
+      indexApi.tree({id: meunId}).then((res) => {
+        if (type)
           this.data = res.data.menuTrees;
         this.$nextTick(() => {
           console.log(meunId);
-          if(res.data.ids!=null && res.data.ids!="")
-          {
-            var ids = res.data.ids.split(",")
-            for(var i = 0;i<ids.length-1;i++){
+          if (res.data.ids != null && res.data.ids !== "") {
+            const ids = res.data.ids.split(",");
+            for (let i = 0; i < ids.length - 1; i++) {
               this.$refs.tree.store.nodesMap[ids[i]].expanded = true;
             }
           }
           if (meunId != null) this.$refs.tree.setCurrentKey(meunId);
         });
       });
-   },
-   openTreeNodes(id){
+    },
+    openTreeNodes(id) {
       this.$refs.tree.store.nodesMap[id.parentId].expanded = true;
       this.$refs.tree.setCurrentKey(id.id);
-   },
-   back(){
-    let currentNode = this.$refs.tree.getCurrentNode()
-    console.log(currentNode)
-    if(currentNode.parentId != null && currentNode.parentId > 0)
-    this.$router.push({ name: "indexmenu", params: { menuId: currentNode.parentId } })
-   }
+    },
+    back() {
+      let currentNode = this.$refs.tree.getCurrentNode()
+      console.log(currentNode)
+      if (currentNode.parentId != null && currentNode.parentId > 0)
+        this.$router.push({name: "indexmenu", params: {menuId: currentNode.parentId}})
+    }
   },
 };
 </script>
 
 <style lang="scss">
 .el-tree {
-    background: #f5f5f5!important;
+  background: #f5f5f5 !important;
 }
 
 /*设置字体大小*/
@@ -289,8 +289,9 @@ export default {
   width: 100%;
   font-size: 12px;
   font-weight: 400;
-  font-family:"Helvetica Neue", "Hiragino Sans GB", "Microsoft Yahei", "WenQuanYi Micro Hei", sans-serif;
+  font-family: "Helvetica Neue", "Hiragino Sans GB", "Microsoft Yahei", "WenQuanYi Micro Hei", sans-serif;
 }
+
 /*设置鼠标悬浮经过的颜色*/
 // .el-tree-node:hover > .el-tree-node__content {
 //   background-color: #1C222B !important;
@@ -307,17 +308,21 @@ export default {
 .el-tree-node__content {
   height: 30px;
 }
+
 .custom-tree-node img {
   vertical-align: middle;
 }
+
 .nodeInput {
   width: calc(100% - 6px);;
 }
-.el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
-    background-color: #398dee;
-    color: #fff !important;
+
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  background-color: #398dee;
+  color: #fff !important;
 }
+
 .el-tree {
-    color: #2c3e50;
+  color: #2c3e50;
 }
 </style>
