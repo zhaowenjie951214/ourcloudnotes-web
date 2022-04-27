@@ -1,6 +1,7 @@
-# ourcloudnotes(个人云笔记)
+# 个人云笔记-ourcloudnotes
 ```
-个人云笔记(模仿有道云笔记)，服务端用 Java Springboot 编写；
+个人云笔记，模仿有道云，个人制作的一款，多人协同的云笔记，简介，高效。前端项目
+服务端用 Java Springboot 编写；
 如需要请联系微信：perpetual1214
 支持私有部署
 编写的文档支持导出pdf，进行A4打印装订成册
