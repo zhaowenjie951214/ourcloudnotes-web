@@ -2,6 +2,8 @@
 ```
 个人云笔记(模仿有道云笔记)，服务端用 Java Springboot 编写；
 如需要请联系微信：perpetual1214
+
+编写的文档支持导出pdf，进行A4打印装订成册
 ```
 ![img.png](mdfile/img.png)
 ![img.png](mdfile/img2.png)
